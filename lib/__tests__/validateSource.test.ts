@@ -132,6 +132,50 @@ describe("validateSourceStrict", () => {
   test("does not throw for valid source", () => {
     expect(() => {
       validateSourceStrict("https://ark.intel.com/test");
+
+        // Error code validation
+  test("returns SOURCE_NOT_ALLOWED error code for forbidden domains", () => {
+    const result = validateSource("https://pcpartpicker.com/test");
+    expect(result.valid).toBe(false);
+    expect(result.errorCode).toBe("SOURCE_NOT_ALLOWED");
+  });
+
+  test("returns SOURCE_TYPE_NOT_ALLOWED when domain doesn't support type", () => {
+    const result = validateSource("https://intel.com/test", "price");
+    expect(result.valid).toBe(false);
+    expect(result.errorCode).toBe("SOURCE_TYPE_NOT_ALLOWED");
+  });
+
+  test("returns INVALID_URL error code for malformed URLs", () => {
+    const result = validateSource("not-a-url");
+    expect(result.valid).toBe(false);
+    expect(result.errorCode).toBe("INVALID_URL");
+  });
+
+  // Semantic type validation
+  test("prevents getting price data from CPU spec sources", () => {
+    const intel = validateSource("https://intel.com/test", "price");
+    expect(intel.valid).toBe(false);
+    expect(intel.errorCode).toBe("SOURCE_TYPE_NOT_ALLOWED");
+
+    const amd = validateSource("https://amd.com/test", "price");
+    expect(amd.valid).toBe(false);
+    expect(amd.errorCode).toBe("SOURCE_TYPE_NOT_ALLOWED");
+  });
+
+  test("prevents getting CPU specs from price sources", () => {
+    const result = validateSource("https://pccomponentes.com/test", "cpu_specs");
+    expect(result.valid).toBe(false);
+    expect(result.errorCode).toBe("SOURCE_TYPE_NOT_ALLOWED");
+  });
+
+  test("allows AMD to provide both CPU and GPU specs", () => {
+    const cpuResult = validateSource("https://amd.com/test", "cpu_specs");
+    expect(cpuResult.valid).toBe(true);
+
+    const gpuResult = validateSource("https://amd.com/test", "gpu_specs");
+    expect(gpuResult.valid).toBe(true);
+  });
     }).not.toThrow();
   });
 });
