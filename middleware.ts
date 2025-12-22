@@ -4,11 +4,30 @@ import { NextRequest, NextResponse } from 'next/server';
 const locales = ['en', 'es', 'pt'];
 const defaultLocale = 'en';
 
-// Get locale from pathname (e.g., /es/page -> es)
-function getLocale(pathname: string): string {
-  const segments = pathname.split('/');
-  const firstSegment = segments[1];
-  return locales.includes(firstSegment) ? firstSegment : defaultLocale;
+// Detect user's preferred language from Accept-Language header
+function getUserLocale(request: NextRequest): string {
+  const acceptLanguage = request.headers.get('accept-language');
+  
+  if (!acceptLanguage) return defaultLocale;
+  
+  // Parse Accept-Language header (e.g., "en-US,en;q=0.9,es;q=0.8")
+  const languages = acceptLanguage
+    .split(',')
+    .map(lang => {
+      const [code, q = 'q=1'] = lang.trim().split(';');
+      const quality = parseFloat(q.split('=')[1] || '1');
+      return { code: code.toLowerCase().split('-')[0], quality };
+    })
+    .sort((a, b) => b.quality - a.quality);
+  
+  // Find first matching supported locale
+  for (const { code } of languages) {
+    if (locales.includes(code)) {
+      return code;
+    }
+  }
+  
+  return defaultLocale;
 }
 
 export function middleware(request: NextRequest) {
@@ -29,9 +48,9 @@ export function middleware(request: NextRequest) {
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  // If no locale in pathname, redirect to default locale
+  // If no locale in pathname, redirect to user's preferred locale
   if (!pathnameHasLocale) {
-    const locale = defaultLocale;
+    const locale = getUserLocale(request);
     request.nextUrl.pathname = `/${locale}${pathname}`;
     return NextResponse.redirect(request.nextUrl);
   }
