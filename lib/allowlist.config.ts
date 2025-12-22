@@ -14,20 +14,18 @@
  * - Any scraped dataset
  */
 
-export type SourceType = 
-  | "price_availability"
+/**
+ * Semantic data types
+ * This prevents logical errors like getting prices from Intel
+ */
+export type SourceDataType = 
   | "cpu_specs"
-  | "gpu_specs_amd"
-  | "gpu_specs_nvidia"
-  | "ram_specs"
-  | "motherboard_specs"
-  | "psu_specs"
-  | "storage_specs"
-  | "case_specs";
+  | "gpu_specs"
+  | "price";
 
 export interface AllowedDomain {
   domain: string;
-  types: SourceType[];
+  types: SourceDataType[];
   description: string;
   notes?: string;
 }
@@ -36,7 +34,7 @@ export const ALLOWED_SOURCES: AllowedDomain[] = [
   // Price & Availability
   {
     domain: "pccomponentes.com",
-    types: ["price_availability"],
+    types: ["price"],
     description: "PcComponentes - Official Spanish retailer for prices and availability",
     notes: "Primary source for pricing data"
   },
@@ -50,19 +48,14 @@ export const ALLOWED_SOURCES: AllowedDomain[] = [
   },
   {
     domain: "amd.com",
-    types: ["cpu_specs"],
-    description: "AMD - Official CPU specifications",
+    types: ["cpu_specs", "gpu_specs"],
+    description: "AMD - Official CPU and GPU specifications",
   },
 
   // GPU Specifications
   {
-    domain: "amd.com",
-    types: ["gpu_specs_amd"],
-    description: "AMD - Official GPU specifications",
-  },
-  {
     domain: "nvidia.com",
-    types: ["gpu_specs_nvidia"],
+    types: ["gpu_specs"],
     description: "NVIDIA - Official GPU specifications",
   },
 
@@ -108,7 +101,7 @@ export function isDomainAllowed(domain: string): boolean {
 /**
  * Get allowed source types for a domain
  */
-export function getAllowedTypes(domain: string): SourceType[] {
+export function getAllowedTypes(domain: string): SourceDataType[] {
   const source = ALLOWED_SOURCES.find(
     (allowed) => allowed.domain === domain
   );
