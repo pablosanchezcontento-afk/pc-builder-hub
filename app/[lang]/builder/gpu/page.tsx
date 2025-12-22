@@ -2,19 +2,18 @@ import { getAllGPUs } from '@/lib/db';
 import Link from 'next/link';
 
 interface PageProps {
-  params: { lang: string };
-  searchParams: { cpu?: string };
-}
-
+  params: Promise<{ lang: string }>;  searchParams: { cpu?: string };
+  searchParams: Promise<{ cpu?: string }>;
 export default async function GPUSelectionPage({ params, searchParams }: PageProps) {
-  const gpus = await getAllGPUs();
-  const cpuSlug = searchParams.cpu;
+    const { lang } = await params;
+  const { cpu: cpuSlug } = await searchParams;
+const gpus = await getAllGPUs();
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
         <Link 
-          href={`/${params.lang}/builder${cpuSlug ? `?cpu=${cpuSlug}` : ''}`}
+          href={`/${lang}/builder${cpuSlug ? `?cpu=${cpuSlug}` : ''}`}
           className="text-blue-600 hover:underline"
         >
           ← Volver al builder
@@ -28,7 +27,7 @@ export default async function GPUSelectionPage({ params, searchParams }: PagePro
         {gpus.map((gpu) => (
           <Link
             key={gpu.id}
-            href={`/${params.lang}/builder?gpu=${gpu.slug}${cpuSlug ? `&cpu=${cpuSlug}` : ''}`}
+            href={`/${lang}/builder?gpu=${gpu.slug}${cpuSlug ? `&cpu=${cpuSlug}` : ''}`}
             className="border rounded-lg p-6 hover:border-blue-500 hover:shadow-lg transition-all"
           >
             <div className="space-y-3">
