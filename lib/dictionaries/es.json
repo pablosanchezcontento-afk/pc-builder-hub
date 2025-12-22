@@ -1,0 +1,19 @@
+{
+  "home": {
+    "title": "PC Builder Hub",
+    "subtitle": "Plataforma multiidioma para comparar componentes de PC y construir tu equipo",
+    "description": "Compara componentes de PC con especificaciones oficiales de fuentes confiables. Construye tu PC perfecto con confianza."
+  },
+  "nav": {
+    "home": "Inicio",
+    "compare": "Comparar",
+    "builder": "Constructor de PC",
+    "about": "Acerca de"
+  },
+  "common": {
+    "language": "Idioma",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "readMore": "Leer más"
+  }
+}
