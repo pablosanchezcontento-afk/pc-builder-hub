@@ -2,19 +2,19 @@ import { getAllCPUs } from '@/lib/db';
 import Link from 'next/link';
 
 interface PageProps {
-  params: { lang: string };
-  searchParams: { gpu?: string };
+  params: Promise<{ lang: string }>;  searchParams: { gpu?: string };
 }
 
 export default async function CPUSelectionPage({ params, searchParams }: PageProps) {
-  const cpus = await getAllCPUs();
+    const { lang } = await params;
+const cpus = await getAllCPUs();
   const gpuSlug = searchParams.gpu;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
         <Link 
-          href={`/${params.lang}/builder${gpuSlug ? `?gpu=${gpuSlug}` : ''}`}
+          href={`/${lang}/builder${gpuSlug ? `?gpu=${gpuSlug}` : ''}`}
           className="text-blue-600 hover:underline"
         >
           ← Volver al builder
@@ -28,7 +28,7 @@ export default async function CPUSelectionPage({ params, searchParams }: PagePro
         {cpus.map((cpu) => (
           <Link
             key={cpu.id}
-            href={`/${params.lang}/builder?cpu=${cpu.slug}${gpuSlug ? `&gpu=${gpuSlug}` : ''}`}
+            href={`/${lang}/builder?cpu=${cpu.slug}${gpuSlug ? `&gpu=${gpuSlug}` : ''}`}
             className="border rounded-lg p-6 hover:border-blue-500 hover:shadow-lg transition-all"
           >
             <div className="space-y-3">
