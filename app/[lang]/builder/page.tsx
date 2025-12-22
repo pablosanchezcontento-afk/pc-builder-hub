@@ -2,13 +2,10 @@ import { getCPUBySlug, getGPUBySlug } from '@/lib/db';
 import Link from 'next/link';
 
 interface PageProps {
-  params: { lang: string };
-  searchParams: { cpu?: string; gpu?: string };
-}
-
+  params: Promise<{ lang: string }>;  searchParams: { cpu?: string; gpu?: string };
+  searchParams: Promise<{ cpu?: string; gpu?: string }>;
 export default async function BuilderPage({ params, searchParams }: PageProps) {
-  const cpuSlug = searchParams.cpu;
-  const gpuSlug = searchParams.gpu;
+    const { cpu: cpuSlug, gpu: gpuSlug } = await searchParams;
 
   const cpu = cpuSlug ? await getCPUBySlug(cpuSlug) : null;
   const gpu = gpuSlug ? await getGPUBySlug(gpuSlug) : null;
