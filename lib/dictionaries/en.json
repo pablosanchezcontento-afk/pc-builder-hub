@@ -1,0 +1,19 @@
+{
+  "home": {
+    "title": "PC Builder Hub",
+    "subtitle": "Multi-language PC component comparison and builder platform",
+    "description": "Compare PC components with official specs from trusted sources. Build your perfect PC with confidence."
+  },
+  "nav": {
+    "home": "Home",
+    "compare": "Compare",
+    "builder": "PC Builder",
+    "about": "About"
+  },
+  "common": {
+    "language": "Language",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "readMore": "Read more"
+  }
+}
