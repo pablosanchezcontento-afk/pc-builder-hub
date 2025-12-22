@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 interface PageProps {
   params: Promise<{ lang: string }>;  searchParams: { cpu?: string; gpu?: string };
-  searchParams: Promise<{ cpu?: string; gpu?: string }>;
+  searchParams: Promise<{ cu?: string; gpu?: string }>;
 export default async function BuilderPage({ params, searchParams }: PageProps) {
     const { cpu: cpuSlug, gpu: gpuSlug } = await searchParams;
 
