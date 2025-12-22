@@ -2,13 +2,12 @@ import { getAllCPUs } from '@/lib/db';
 import Link from 'next/link';
 
 interface PageProps {
-  params: Promise<{ lang: string }>;  searchParams: { gpu?: string };
-}
+  searchParams: Promise<{ gpu?: string }>;}
 
 export default async function CPUSelectionPage({ params, searchParams }: PageProps) {
     const { lang } = await params;
 const cpus = await getAllCPUs();
-  const gpuSlug = searchParams.gpu;
+    const { gpu: gpuSlug } = await searchParams;
 
   return (
     <div className="container mx-auto px-4 py-8">
