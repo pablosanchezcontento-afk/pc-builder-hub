@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getAllGPUs, createSlug } from '@/lib/db';
 
 export default async function GPUsPage({ params }: { params: Promise<{ lang: string }> }) 
-  const { lang } = await params;{
+  const { lang } = await params;
   const gpus = getAllGPUs();
 
   return (
