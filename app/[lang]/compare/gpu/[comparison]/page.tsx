@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { getGPUBySlug } from '@/lib/db';
 
 interface PageProps {
-  params: { lang: string; comparison: string };
+    params: Promise<{ lang: string; comparison: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const parts = params.comparison.split('-vs-');
-  if (parts.length !== 2) return { title: 'Comparación no válida' };
-
+    const { comparison } = await params;
+    const slugs = comparison.split('-vs-');
+  if (slugs.length !== 2) return { title: 'Comparación no válida' };
   const [slugA, slugB] = parts;
   const gpuA = getGPUBySlug(slugA);
   const gpuB = getGPUBySlug(slugB);
@@ -24,9 +24,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default function GPUComparisonPage({ params }: PageProps) {
-  const parts = params.comparison.split('-vs-');
-  if (parts.length !== 2) notFound();
-
+    const { comparison } = await params;
+  const slugs = comparison.split('-vs-');
+  if (slugs.length !== 2) notFound();
   const [slugA, slugB] = parts;
   const gpuA = getGPUBySlug(slugA);
   const gpuB = getGPUBySlug(slugB);
