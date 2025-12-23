@@ -2,13 +2,12 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getGPUBySlug } from '@/lib/db';
 
-export default function GPUDetailPage({ 
+export default  asyncfunction GPUDetailPage({ 
   params 
 }: { 
-  params: { slug: string; lang: string } 
-}) {
-  const gpu = getGPUBySlug(params.slug);
-
+    params: Promise<{ slug: string; lang: string }>}) {
+    const { slug, lang } = await params;
+  const gpu = getGPUBySlug(slug);
   if (!gpu) {
     notFound();
   }
@@ -16,8 +15,7 @@ export default function GPUDetailPage({
   return (
     <div className="container mx-auto px-4 py-8">
       <Link 
-        href={`/${params.lang}/gpus`}
-        className="text-blue-600 hover:underline mb-4 inline-block"
+        href={`/${lang}/gpus`}        className="text-blue-600 hover:underline mb-4 inline-block"
       >
         \u2190 Volver a GPUs
       </Link>
