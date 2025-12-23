@@ -5,7 +5,8 @@ import { getGPUBySlug } from '@/lib/db';
 export default  asyncfunction GPUDetailPage({ 
   params 
 }: { 
-    params: Promise<{ slug: string; lang: string }>) {
+    params: Promise<{ slug: string; lang: string }>
+      }) {
     const { slug, lang } = await params;
   const gpu = getGPUBySlug(slug);
   if (!gpu) {
