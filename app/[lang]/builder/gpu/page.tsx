@@ -2,7 +2,7 @@ import { getAllGPUs } from '@/lib/db';
 import Link from 'next/link';
 
 interface PageProps {
-  params: Promise<{ lang: string }>;  searchParams: { cpu?: string };
+    params: Promise<{ lang: string }>;
   searchParams: Promise<{ cpu?: string }>;
 export default async function GPUSelectionPage({ params, searchParams }: PageProps) {
     const { lang } = await params;
