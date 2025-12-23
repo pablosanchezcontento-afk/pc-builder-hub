@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { getAllGPUs, createSlug } from '@/lib/db';
 
-export default function GPUsPage({ params }: { params: { lang: string } }) {
+export default async function GPUsPage({ params }: { params: Promise<{ lang: string }> }) 
+  const { lang } = await params;{
   const gpus = getAllGPUs();
 
   return (
@@ -18,8 +19,7 @@ export default function GPUsPage({ params }: { params: { lang: string } }) {
             return (
               <Link 
                 key={gpu.id} 
-                href={`/${params.lang}/gpus/${slug}`}
-                className="border rounded-lg p-6 hover:shadow-lg transition"
+                href={`/${lang}/gpus/${slug}`}                className="border rounded-lg p-6 hover:shadow-lg transition"
               >
                 <h2 className="text-xl font-semibold mb-2">{gpu.model}</h2>
                 <p className="text-sm text-gray-600 mb-4">{gpu.manufacturer_name}</p>
