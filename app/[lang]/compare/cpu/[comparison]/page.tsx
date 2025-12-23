@@ -4,13 +4,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 interface PageProps {
-  params: { lang: string; comparison: string };
+    params: Promise<{ lang: string; comparison: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const slugs = params.comparison.split('-vs-');
-  if (slugs.length !== 2) return { title: 'Comparación no válida' };
-
+    const { comparison } = await params;
+    const slugs = comparison.split('-vs-');
+if (slugs.length !== 2) return { title: 'Comparación no válida' };
   const [cpuA, cpuB] = await Promise.all([
     getCPUBySlug(slugs[0]),
     getCPUBySlug(slugs[1])
@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CPUComparisonPage({ params }: PageProps) {
-  const slugs = params.comparison.split('-vs-');
+    const { comparison } = await params;
+    const slugs = comparison.split('-vs-');
   
   if (slugs.length !== 2) {
     notFound();
