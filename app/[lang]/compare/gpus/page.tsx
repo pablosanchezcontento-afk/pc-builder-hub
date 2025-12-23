@@ -1,7 +1,6 @@
 import { getAllGPUs, getGPUBySlug } from '@/lib/db';
 import { notFound } from 'next/navigation';
-import CompareSelector from '../CompareSelector';
-
+import CompareSelector from './CompareSelector';
 interface PageProps {
     params: Promise<{ lang: string }>;
     searchParams: Promise<{ a?: string; b?: string }>;
