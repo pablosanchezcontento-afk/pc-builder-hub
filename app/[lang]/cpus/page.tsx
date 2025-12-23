@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { getAllCPUs, createSlug } from '@/lib/db';
 
-export default function CPUsPage({ params }: { params: { lang: string } }) {
+export default async function CPUsPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const cpus = getAllCPUs();
 
   return (
@@ -17,8 +18,8 @@ export default function CPUsPage({ params }: { params: { lang: string } }) {
             
             return (
               <Link 
-                key={cpu.id} 
-                href={`/${params.lang}/cpus/${slug}`}
+                key={cpu.id}
+                href={`/${lang}/cpus/${slug}`}
                 className="border rounded-lg p-6 hover:shadow-lg transition"
               >
                 <h2 className="text-xl font-semibold mb-2">{cpu.model}</h2>
@@ -26,7 +27,7 @@ export default function CPUsPage({ params }: { params: { lang: string } }) {
                 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">N\u00facleos:</span>
+                    <span className="text-gray-600">Núcleos:</span>
                     <span className="font-medium">{cpu.cores}</span>
                   </div>
                   <div className="flex justify-between">
@@ -35,25 +36,13 @@ export default function CPUsPage({ params }: { params: { lang: string } }) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Frecuencia Base:</span>
-                    <span className="font-medium">{cpu.base_clock_ghz} GHz</span>
+                    <span className="font-medium">{cpu.base_clock} GHz</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Frecuencia Boost:</span>
-                    <span className="font-medium">{cpu.boost_clock_ghz} GHz</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Socket:</span>
-                    <span className="font-medium">{cpu.socket}</span>
+                    <span className="text-gray-600">TDP:</span>
+                    <span className="font-medium">{cpu.tdp}W</span>
                   </div>
                 </div>
-                
-                {cpu.current_price_eur && (
-                  <div className="mt-4 pt-4 border-t">
-                    <p className="text-2xl font-bold text-blue-600">
-                      \u20ac{cpu.current_price_eur.toFixed(2)}
-                    </p>
-                  </div>
-                )}
               </Link>
             );
           })}
