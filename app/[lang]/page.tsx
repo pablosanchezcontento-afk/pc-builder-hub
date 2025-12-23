@@ -5,9 +5,9 @@ interface PageProps {
   params: Promise<{ lang: string }>;}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { lang } = await params;
   return {
-      const { lang } = await params;
-    title: 'PC Builder Hub – Comparador de componentes de PC',
+    title: 'PC Builder Hub - Comparador de componentes de PC',
     description: 'Compara especificaciones oficiales de CPUs y GPUs. Sin rankings, sin benchmarks inventados. Solo datos verificados de fabricantes.',
   };
 }
