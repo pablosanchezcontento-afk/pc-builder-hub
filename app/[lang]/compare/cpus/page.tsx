@@ -3,18 +3,19 @@ import { notFound } from 'next/navigation';
 import CompareSelector from './CompareSelector';
 
 interface PageProps {
-  params: { lang: string };
-  searchParams: { a?: string; b?: string };
+      params: Promise<{ lang: string }>;
+      searchParams: Promise<{ a?: string; b?: string }>;
 }
 
 export default async function CompareCPUsPage({ params, searchParams }: PageProps) {
   const cpus = await getAllCPUs();
-  const cpuA = searchParams.a ? await getCPUBySlug(searchParams.a) : null;
-  const cpuB = searchParams.b ? await getCPUBySlug(searchParams.b) : null;
+      const resolvedSearchParams = await searchParams;
+      const { lang } = await params;
+    const cpuA = resolvedSearchParams.a ? await getCPUBySlug(resolvedSearchParams.a) : null;
+      const cpuB = resolvedSearchParams.b ? await getCPUBySlug(resolvedSearchParams.b) : null;
 
   // Si se especifica un slug pero no existe, mostrar 404
-  if ((searchParams.a && !cpuA) || (searchParams.b && !cpuB)) {
-    notFound();
+    if ((resolvedSearchParams.a && !cpuA) || (resolvedSearchParams.b && !cpuB)) {    notFound();
   }
 
   return (
@@ -25,10 +26,7 @@ export default async function CompareCPUsPage({ params, searchParams }: PageProp
         cpus={cpus}
         cpuA={cpuA}
         cpuB={cpuB}
-        lang={params.lang}
-        slugA={searchParams.a}
-        slugB={searchParams.b}
-      />
+            lang={lang}            slugB={resolvedSearchParams.b}      />
 
       {cpuA && cpuB && (
         <div className="overflow-x-auto mt-8">
