@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getGPUBySlug } from '@/lib/db';
 
-export default  asyncfunction GPUDetailPage({ 
+export default  async function GPUDetailPage({ 
   params 
 }: { 
     params: Promise<{ slug: string; lang: string }>
