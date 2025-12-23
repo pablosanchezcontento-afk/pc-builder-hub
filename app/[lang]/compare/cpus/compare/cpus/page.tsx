@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { CPU } from '@/lib/db/types';
 
-export default function CompareCPUsPage({ params }: { params: { lang: string } }) {
+export default function CompareCPUsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [cpus, setCpus] = useState<CPU[]>([]);
