@@ -3,21 +3,23 @@ import Link from 'next/link';
 import { getAllCPUs } from '@/lib/db';
 
 interface PageProps {
-  params: { lang: string; socket: string };
+  params: Promise<{ lang: string; socket: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const socketDecoded = decodeURIComponent(params.socket);
+  const { socket } = await params;
+  const socketDecoded = decodeURIComponent(socket);
   return {
     title: `CPUs con Socket ${socketDecoded} - PC Builder Hub`,
     description: `Listado completo de procesadores compatibles con socket ${socketDecoded}. Especificaciones oficiales y comparaciones.`,
   };
 }
 
-export default function CPUSocketPage({ params }: PageProps) {
-  const socketDecoded = decodeURIComponent(params.socket);
+export default async function CPUSocketPage({ params }: PageProps) {
+  const { lang, socket } = await params;
+  const socketDecoded = decodeURIComponent(socket);
   const allCPUs = getAllCPUs();
-  
+
   // Filtrar CPUs por socket
   const filteredCPUs = allCPUs.filter(
     (cpu) => cpu.socket && cpu.socket.toLowerCase() === socketDecoded.toLowerCase()
@@ -26,7 +28,7 @@ export default function CPUSocketPage({ params }: PageProps) {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-6">
-        <Link href={`/${params.lang}/cpus`} className="text-blue-600 hover:underline">
+        <Link href={`/${lang}/cpus`} className="text-blue-600 hover:underline">
           ← Volver a todos los CPUs
         </Link>
       </div>
@@ -37,62 +39,64 @@ export default function CPUSocketPage({ params }: PageProps) {
       </p>
 
       {filteredCPUs.length === 0 ? (
-        <div className="bg-gray-50 border border-gray-200 rounded p-8 text-center">
-          <p className="text-gray-600">No hay procesadores registrados para este socket.</p>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <p className="text-gray-700">
+            No se encontraron procesadores con el socket <strong>{socketDecoded}</strong>.
+          </p>
           <Link
-            href={`/${params.lang}/cpus`}
+            href={`/${lang}/cpus`}
             className="text-blue-600 hover:underline mt-4 inline-block"
           >
             Ver todos los CPUs disponibles
           </Link>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredCPUs.map((cpu) => (
             <div
               key={cpu.id}
-              className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+              className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-2xl font-semibold">{cpu.model}</h2>
-                  <p className="text-gray-600">{cpu.manufacturer_name}</p>
+              <h2 className="text-xl font-bold mb-2">{cpu.model}</h2>
+              <p className="text-sm text-gray-600 mb-4">{cpu.manufacturer_name}</p>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Núcleos:</span>
+                  <span className="font-medium">{cpu.cores}</span>
                 </div>
-                <div className="text-right">
-                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-medium">
-                    {cpu.socket}
-                  </span>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Hilos:</span>
+                  <span className="font-medium">{cpu.threads}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Frecuencia Base:</span>
+                  <span className="font-medium">{cpu.base_clock} GHz</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">TDP:</span>
+                  <span className="font-medium">{cpu.tdp}W</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <p className="text-sm text-gray-500">Núcleos</p>
-                  <p className="font-medium">{cpu.cores ?? 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Hilos</p>
-                  <p className="font-medium">{cpu.threads ?? 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Frecuencia Base</p>
-                  <p className="font-medium">{cpu.base_clock_ghz ? `${cpu.base_clock_ghz} GHz` : 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Frecuencia Boost</p>
-                  <p className="font-medium">{cpu.boost_clock_ghz ? `${cpu.boost_clock_ghz} GHz` : 'N/A'}</p>
-                </div>
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <Link
+                  href={`/${lang}/cpus/${cpu.slug}`}
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  Ver especificaciones completas
+                </Link>
               </div>
 
               <div className="flex gap-3">
                 <Link
-                  href={`/${params.lang}/cpus/${cpu.slug}`}
+                  href={`/${lang}/cpus/${cpu.slug}`}
                   className="text-blue-600 hover:underline text-sm"
                 >
                   Ver especificaciones completas
                 </Link>
                 <Link
-                  href={`/${params.lang}/compare/cpus`}
+                  href={`/${lang}/compare/cpus`}
                   className="text-blue-600 hover:underline text-sm"
                 >
                   Comparar con otros CPUs
