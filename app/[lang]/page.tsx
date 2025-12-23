@@ -2,17 +2,18 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 interface PageProps {
-  params: { lang: string };
-}
+  params: Promise<{ lang: string }>;}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   return {
+      const { lang } = await params;
     title: 'PC Builder Hub – Comparador de componentes de PC',
     description: 'Compara especificaciones oficiales de CPUs y GPUs. Sin rankings, sin benchmarks inventados. Solo datos verificados de fabricantes.',
   };
 }
 
-export default function HomePage({ params }: PageProps) {
+export default async function HomePage({ params }: PageProps) {
+    const { lang } = await params;
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
