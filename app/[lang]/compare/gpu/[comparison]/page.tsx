@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function GPUComparisonPage({ params }: PageProps) {
+export default async function GPUComparisonPage({ params }: PageProps) {
     const { comparison } = await params;
   const slugs = comparison.split('-vs-');
   if (slugs.length !== 2) notFound();
