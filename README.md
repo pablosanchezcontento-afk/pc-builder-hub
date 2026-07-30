@@ -1,45 +1,61 @@
 # PC Builder Hub
 
-Aplicación web multilingüe para explorar y comparar componentes de PC usando especificaciones verificables. El proyecto evita rankings opacos y no presenta estimaciones de rendimiento como si fueran datos oficiales.
+PC Builder Hub is a transparent PC component explorer, comparison tool and compatibility-first PC builder. It uses manufacturer specifications instead of invented aggregate scores.
 
-## Funcionalidades
+## What it does
 
-- Catálogo de CPUs y GPUs.
-- Fichas por componente y rutas filtradas por socket o VRAM.
-- Comparadores lado a lado.
-- Builder con comprobaciones básicas de compatibilidad.
-- SQLite en modo de solo lectura para la aplicación.
-- Rutas localizadas con Next.js App Router.
+- Browse CPUs and GPUs from a local SQLite catalogue.
+- Compare components side by side using their published specifications.
+- Build a CPU + GPU configuration and receive explainable compatibility checks.
+- Navigate in Spanish or English.
+- Keep every component tied to a source and verification state.
 
-## Stack
+## Product principles
 
-- Next.js 15, React 19 y TypeScript.
-- SQLite mediante `better-sqlite3`.
-- Tailwind CSS.
+1. **No fake benchmark scores.** The project does not invent performance rankings.
+2. **Explain every warning.** Compatibility results state the rule that triggered them.
+3. **Separate facts from advice.** Manufacturer specifications are facts; recommendations are labelled as guidance.
+4. **Fail honestly.** Missing data is shown as unknown instead of silently guessed.
 
-## Desarrollo local
+## Tech stack
+
+- Next.js 15 App Router
+- React 19 and TypeScript
+- SQLite through `better-sqlite3`
+- Tailwind CSS
+
+## Run locally
 
 ```bash
-npm ci
+npm install
 npm run dev
 ```
 
-La aplicación espera la base de datos en `data/pc_components.db`. Antes de publicar datos nuevos, conserva la fuente original, fecha de consulta y URL del fabricante.
+The application expects the catalogue at `data/pc_components.db`. The database should expose the views `v_cpus_complete` and `v_gpus_complete` used by the read-only data layer.
 
-## Verificación
+## Quality checks
 
 ```bash
 npm run lint
 npm run build
 ```
 
-## Principios de datos
+Pull requests run the same checks through GitHub Actions.
 
-1. Una especificación debe tener fuente identificable.
-2. Un dato desconocido no se sustituye por una estimación.
-3. Las comparaciones muestran diferencias; no inventan un ganador.
-4. La compatibilidad mostrada es orientativa y no cubre por sí sola fuente, BIOS, dimensiones, refrigeración o consumo transitorio.
+## Current scope
 
-## Estado
+The public version focuses on CPUs, GPUs, comparisons and an explainable CPU/GPU builder. PSU sizing, motherboard selection, RAM, storage, physical dimensions and live prices are intentionally outside the validated scope until the catalogue contains enough structured data to support them reliably.
 
-Proyecto en desarrollo. Las siguientes prioridades son ampliar pruebas, documentar la procedencia de cada registro y desplegar una demo estable.
+## Data quality
+
+Every imported record should include:
+
+- manufacturer and model;
+- official source URL;
+- source retrieval or verification date;
+- explicit nulls for unavailable fields;
+- no inferred benchmark or performance score.
+
+## Portfolio note
+
+This repository demonstrates product definition, source-aware data modelling, explainable compatibility rules and quality-gated delivery. Coding assistants may be used during implementation, but product scope, validation criteria and final review remain human-directed.
