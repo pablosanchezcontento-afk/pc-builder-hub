@@ -1,9 +1,7 @@
 name: Export complete source
 
 on:
-  push:
-    branches:
-      - agent/export-complete-project
+  pull_request:
   workflow_dispatch:
 
 permissions:
