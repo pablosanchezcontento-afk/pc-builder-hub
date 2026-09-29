@@ -1,7 +1,7 @@
 // lib/__tests__/validateSource.test.ts
 
-import { describe, expect, test } from "@jest/globals";
-import { validateSource, validateSources, validateSourceStrict } from "../validateSource";
+import { describe, expect, test } from "vitest";
+import { SourceValidationError, ValidationErrorCode, validateSource, validateSources, validateSourceStrict } from "../validateSource";
 
 describe("validateSource", () => {
   // Valid sources
@@ -80,7 +80,7 @@ describe("validateSource", () => {
   test("rejects mismatched source type", () => {
     const result = validateSource(
       "https://ark.intel.com/content/www/us/en/ark/products/230496/intel-core-i9-14900k-processor.html",
-      "price_availability"
+      "price"
     );
     expect(result.valid).toBe(false);
     expect(result.reason).toContain("does not support source type");
@@ -126,14 +126,18 @@ describe("validateSourceStrict", () => {
   test("throws error for invalid source", () => {
     expect(() => {
       validateSourceStrict("https://pcpartpicker.com/test");
-    }).toThrow("Source validation failed");
+    }).toThrow(SourceValidationError);
+    expect(() => validateSourceStrict("https://pcpartpicker.com/test")).toThrow(/not in the allowlist/);
   });
 
   test("does not throw for valid source", () => {
     expect(() => {
       validateSourceStrict("https://ark.intel.com/test");
+    }).not.toThrow();
+  });
+});
 
-        // Error code validation
+describe("error codes", () => {
   test("returns SOURCE_NOT_ALLOWED error code for forbidden domains", () => {
     const result = validateSource("https://pcpartpicker.com/test");
     expect(result.valid).toBe(false);
@@ -176,6 +180,20 @@ describe("validateSourceStrict", () => {
     const gpuResult = validateSource("https://amd.com/test", "gpu_specs");
     expect(gpuResult.valid).toBe(true);
   });
-    }).not.toThrow();
+});
+
+describe("validateSource hardening", () => {
+  test("rejects non-web protocols even for allowed hosts", () => {
+    expect(validateSource("javascript://intel.com/%0aalert(1)").valid).toBe(false);
+    expect(validateSource("ftp://ftp.amd.com/specs").errorCode).toBe(ValidationErrorCode.INVALID_URL);
+  });
+
+  test("does not allow look-alike or suffix domains", () => {
+    expect(validateSource("https://intel.com.evil.example/specs").valid).toBe(false);
+    expect(validateSource("https://notintel.com/specs").valid).toBe(false);
+  });
+
+  test("normalizes case and trailing dots", () => {
+    expect(validateSource("https://ARK.Intel.COM./x").domain).toBe("intel.com");
   });
 });

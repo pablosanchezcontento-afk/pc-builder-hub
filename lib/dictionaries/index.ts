@@ -1,47 +1,17 @@
-import 'server-only';
+import en from './en.json';
+import es from './es.json';
+import pt from './pt.json';
 import type { Locale } from '../i18n';
 
-// Dictionary type based on our JSON structure
-type Dictionary = {
-  home: {
-    title: string;
-    subtitle: string;
-    description: string;
-  };
-  nav: {
-    home: string;
-    compare: string;
-    builder: string;
-    about: string;
-  };
-  common: {
-    language: string;
-    loading: string;
-    error: string;
-    readMore: string;
-  };
-};
+export type Dictionary = typeof en;
 
-// Cache for loaded dictionaries
-const dictionaries: Partial<Record<Locale, Dictionary>> = {};
+const dictionaries: Record<Locale, Dictionary> = { en, es, pt };
 
-// Dynamic import function for dictionaries
-export const getDictionary = async (locale: Locale): Promise<Dictionary> => {
-  // Return cached dictionary if available
-  if (dictionaries[locale]) {
-    return dictionaries[locale]!;
-  }
+export function getDictionary(locale: Locale): Dictionary {
+  return dictionaries[locale] ?? dictionaries.en;
+}
 
-  // Dynamically import the dictionary
-  try {
-    const dictionary = await import(`./${locale}.json`);    dictionaries[locale] = dictionary.default;
-    return dictionary.default;
-  } catch (error) {
-    console.error(`Failed to load dictionary for locale: ${locale}`, error);
-    // Fallback to English if dictionary not found
-    const fallback = await import('./en.json');
-    return fallback.default;
-  }
-};
-
-export type { Dictionary };
+/** Replace `{name}` placeholders. */
+export function format(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, key: string) => (key in values ? String(values[key]) : match));
+}

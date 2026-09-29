@@ -137,3 +137,7 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Local catalog database (rebuild with npm run db:build)
+data/*.db
+next-env.d.ts

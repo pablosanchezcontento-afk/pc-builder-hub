@@ -1,25 +1,41 @@
 {
   "name": "pc-builder-hub",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Multi-language PC component catalog, comparator and builder backed by official specifications",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:build": "tsx scripts/build-db.ts",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
+    "better-sqlite3": "^11.10.0",
     "next": "15.5.9",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
-    "better-sqlite3": "^11.0.0"
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.9",
-    "typescript": "^5"
+    "tailwindcss": "^4",
+    "tsx": "^4",
+    "typescript": "^5",
+    "vitest": "^3"
   }
 }

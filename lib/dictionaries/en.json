@@ -1,19 +1,94 @@
 {
-  "home": {
+  "meta": {
     "title": "PC Builder Hub",
-    "subtitle": "Multi-language PC component comparison and builder platform",
-    "description": "Compare PC components with official specs from trusted sources. Build your perfect PC with confidence."
+    "description": "Compare CPUs and GPUs using official manufacturer specifications and plan your build."
   },
   "nav": {
     "home": "Home",
+    "cpus": "CPUs",
+    "gpus": "GPUs",
     "compare": "Compare",
-    "builder": "PC Builder",
-    "about": "About"
+    "builder": "Builder",
+    "language": "Language"
+  },
+  "home": {
+    "title": "PC Builder Hub",
+    "subtitle": "Compare PC components with official specifications",
+    "description": "Every specification comes from the manufacturer's own page and every source is checked against an allowlist. If a figure is not published officially, we show it as unavailable instead of guessing.",
+    "browseCpus": "Browse CPUs",
+    "browseGpus": "Browse GPUs",
+    "openBuilder": "Plan a build",
+    "components": "components",
+    "sources": "validated sources",
+    "principlesTitle": "How the data works",
+    "principle1": "Official sources only: Intel, AMD and NVIDIA product pages.",
+    "principle2": "No invented data: missing values stay empty.",
+    "principle3": "Retail links point to PcComponentes; prices appear only when a recorded price exists."
   },
   "common": {
-    "language": "Language",
-    "loading": "Loading...",
-    "error": "An error occurred",
-    "readMore": "Read more"
+    "notAvailable": "Not published",
+    "officialSpecs": "Official specifications",
+    "retailer": "Retailer page",
+    "viewDetails": "View details",
+    "back": "Back",
+    "manufacturer": "Manufacturer",
+    "noPrice": "No recorded price",
+    "price": "Price",
+    "priceDate": "Price recorded {date}",
+    "notFound": "Component not found",
+    "footer": "Specifications from official manufacturer sources. Estimates are indicative."
+  },
+  "cpu": {
+    "title": "Processors (CPUs)",
+    "cores": "Cores",
+    "threads": "Threads",
+    "baseClock": "Base clock",
+    "boostClock": "Boost clock",
+    "tdp": "TDP",
+    "socket": "Socket",
+    "bySocket": "By socket",
+    "socketTitle": "CPUs for socket {socket}"
+  },
+  "gpu": {
+    "title": "Graphics cards (GPUs)",
+    "memory": "Memory",
+    "memoryType": "Memory type",
+    "baseClock": "Base clock",
+    "boostClock": "Boost clock",
+    "tdp": "Board power",
+    "cudaCores": "CUDA cores",
+    "streamProcessors": "Stream processors",
+    "byVram": "By memory",
+    "vramTitle": "GPUs with {gb} GB of memory"
+  },
+  "compare": {
+    "title": "Compare",
+    "cpuTitle": "Compare CPUs",
+    "gpuTitle": "Compare GPUs",
+    "first": "First component",
+    "second": "Second component",
+    "submit": "Compare",
+    "choose": "Choose two components to compare.",
+    "same": "Choose two different components.",
+    "better": "better",
+    "tie": "tie",
+    "spec": "Specification",
+    "lowerIsBetter": "Lower power draw is marked as better."
+  },
+  "builder": {
+    "title": "Build planner",
+    "intro": "Choose a CPU and a GPU to estimate power draw and the power supply you need.",
+    "cpu": "Processor",
+    "gpu": "Graphics card",
+    "none": "— Select —",
+    "submit": "Calculate",
+    "estimatedDraw": "Estimated peak draw",
+    "recommendedPsu": "Recommended PSU",
+    "psuNote": "Estimate: CPU TDP + GPU board power + {rest} W for the rest of the system, with {headroom}% headroom, rounded up to 50 W.",
+    "total": "Total price",
+    "missingCpu": "Select a processor.",
+    "missingGpu": "Select a graphics card.",
+    "missingTdp": "The manufacturer does not publish the power figure for a selected component, so no estimate is shown.",
+    "socketNote": "You need a motherboard with socket {socket}."
   }
 }

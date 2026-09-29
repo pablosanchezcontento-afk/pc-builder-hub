@@ -1,64 +1,35 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllGPUs, createSlug } from '@/lib/db';
+import { ComponentCard } from '@/components/ComponentCard';
+import { gpuRows } from '@/components/specs';
+import { getAllGPUs, getVramSizes } from '@/lib/db';
+import { getDictionary } from '@/lib/dictionaries';
+import { isLocale } from '@/lib/i18n';
+import { resolveLang } from '@/lib/params';
 
-export default async function GPUsPage({ params }: { params: Promise<{ lang: string }> }) 
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
-  const gpus = getAllGPUs();
+  return { title: getDictionary(isLocale(lang) ? lang : 'en').gpu.title };
+}
 
+export default async function GPUsPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang, t } = await resolveLang(params);
+  const gpus = getAllGPUs();
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Tarjetas Gr\u00e1ficas (GPUs)</h1>
-      
-      {gpus.length === 0 ? (
-        <p className="text-gray-600">No hay GPUs disponibles.</p>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {gpus.map((gpu) => {
-            const slug = createSlug(gpu.model);
-            
-            return (
-              <Link 
-                key={gpu.id} 
-                href={`/${lang}/gpus/${slug}`}                className="border rounded-lg p-6 hover:shadow-lg transition"
-              >
-                <h2 className="text-xl font-semibold mb-2">{gpu.model}</h2>
-                <p className="text-sm text-gray-600 mb-4">{gpu.manufacturer_name}</p>
-                
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Memoria:</span>
-                    <span className="font-medium">{gpu.memory_gb} GB {gpu.memory_type}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Frecuencia Base:</span>
-                    <span className="font-medium">{gpu.core_clock_mhz} MHz</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Frecuencia Boost:</span>
-                    <span className="font-medium">{gpu.boost_clock_mhz} MHz</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">TDP:</span>
-                    <span className="font-medium">{gpu.tdp_watts}W</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Interfaz:</span>
-                    <span className="font-medium">{gpu.interface}</span>
-                  </div>
-                </div>
-                
-                {gpu.current_price_eur && (
-                  <div className="mt-4 pt-4 border-t">
-                    <p className="text-2xl font-bold text-blue-600">
-                      \u20ac{gpu.current_price_eur.toFixed(2)}
-                    </p>
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      )}
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">{t.gpu.title}</h1>
+      <nav aria-label={t.gpu.byVram} className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="text-slate-500">{t.gpu.byVram}:</span>
+        {getVramSizes().map(gb => (
+          <Link key={gb} href={`/${lang}/gpus/vram/${gb}`} className="rounded-full border border-slate-300 px-3 py-1 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-900">{gb} GB</Link>
+        ))}
+      </nav>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {gpus.map(gpu => (
+          <ComponentCard key={gpu.id} href={`/${lang}/gpus/${gpu.slug}`} model={gpu.model} manufacturer={gpu.manufacturer}
+            rows={gpuRows(gpu, t)} empty={t.common.notAvailable} cta={t.common.viewDetails} />
+        ))}
+      </div>
     </div>
   );
 }

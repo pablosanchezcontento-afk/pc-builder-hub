@@ -1,97 +1,97 @@
 /**
- * Capa de acceso a datos READ-ONLY para SQLite
- * Utiliza las vistas v_cpus_complete y v_gpus_complete
+ * Read-only catalog queries. Uses data/pc_components.db when it exists (built with `npm run db:build`);
+ * otherwise builds the same catalog in memory from the schema and the validated seed, so the site always
+ * renders real, sourced data and never a silent empty state.
  */
 
+import 'server-only';
 import Database from 'better-sqlite3';
-import { resolve } from 'path';
-import type { CPUView, GPUView, ComponentSlug } from './types';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { createSlug, parseClockGhz, parseMemoryGb, parseWatts } from '../catalog';
+import { createCatalogDatabase } from './populate';
+import type { CPU, GPU, Manufacturer } from './types';
 
-const DB_PATH = resolve(process.cwd(), 'data/pc_components.db');
+export const DB_PATH = resolve(process.cwd(), 'data/pc_components.db');
 
-/**
- * Obtiene la conexi\u00f3n a la base de datos en modo READ-ONLY
- */
-function getDatabase(): Database.Database {
-  try {
-    const db = new Database(DB_PATH, { readonly: true, fileMustExist: true });
-    return db;
-  } catch (error) {
-    console.error('Error al conectar con la base de datos:', error);
-    throw new Error('No se pudo conectar a la base de datos');
+let connection: Database.Database | null = null;
+
+function database(): Database.Database {
+  if (!connection) {
+    connection = existsSync(DB_PATH)
+      ? new Database(DB_PATH, { readonly: true, fileMustExist: true })
+      : createCatalogDatabase();
   }
+  return connection;
 }
 
-/**
- * Convierte un nombre de modelo a slug
- */
-export function createSlug(model: string): ComponentSlug {
-  return model
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+/** For tests: use an explicit connection. */
+export function useDatabase(db: Database.Database | null): void {
+  connection = db;
 }
 
-/**
- * Obtiene todos los CPUs desde la vista v_cpus_complete
- */
-export function getAllCPUs(): CPUView[] {
-  try {
-    const db = getDatabase();
-    const cpus = db.prepare('SELECT * FROM v_cpus_complete ORDER BY manufacturer_name, model').all() as CPUView[];
-    db.close();
-    return cpus;
-  } catch (error) {
-    console.error('Error al obtener CPUs:', error);
-    return [];
-  }
+interface CpuRow {
+  id: number; external_id: string; model: string; manufacturer: Manufacturer;
+  cores: number | null; threads: number | null; base_clock: string | null; boost_clock: string | null;
+  tdp: string | null; socket: string | null; latest_price: number | null; price_date: string | null;
+  specs_url: string | null; price_url: string | null;
 }
 
-/**
- * Obtiene todos los GPUs desde la vista v_gpus_complete
- */
-export function getAllGPUs(): GPUView[] {
-  try {
-    const db = getDatabase();
-    const gpus = db.prepare('SELECT * FROM v_gpus_complete ORDER BY manufacturer_name, model').all() as GPUView[];
-    db.close();
-    return gpus;
-  } catch (error) {
-    console.error('Error al obtener GPUs:', error);
-    return [];
-  }
+interface GpuRow {
+  id: number; external_id: string; model: string; manufacturer: Manufacturer;
+  cuda_cores: number | null; stream_processors: number | null; base_clock: string | null; boost_clock: string | null;
+  memory: string | null; memory_type: string | null; tdp: string | null; latest_price: number | null;
+  price_date: string | null; specs_url: string | null; price_url: string | null;
 }
 
-/**
- * Obtiene un CPU espec\u00edfico por slug
- */
-export function getCPUBySlug(slug: ComponentSlug): CPUView | null {
-  try {
-    const db = getDatabase();
-    const cpus = db.prepare('SELECT * FROM v_cpus_complete').all() as CPUView[];
-    db.close();
-    
-    const cpu = cpus.find(c => createSlug(c.model) === slug);
-    return cpu || null;
-  } catch (error) {
-    console.error('Error al obtener CPU por slug:', error);
-    return null;
-  }
+function toCpu(row: CpuRow): CPU {
+  return {
+    type: 'CPU', id: row.id, externalId: row.external_id, slug: createSlug(row.model), model: row.model,
+    manufacturer: row.manufacturer, cores: row.cores, threads: row.threads,
+    baseClockGhz: parseClockGhz(row.base_clock), boostClockGhz: parseClockGhz(row.boost_clock),
+    tdpW: parseWatts(row.tdp), socket: row.socket, specsUrl: row.specs_url, priceUrl: row.price_url,
+    latestPriceEur: row.latest_price, priceDate: row.price_date,
+  };
 }
 
-/**
- * Obtiene un GPU espec\u00edfico por slug
- */
-export function getGPUBySlug(slug: ComponentSlug): GPUView | null {
-  try {
-    const db = getDatabase();
-    const gpus = db.prepare('SELECT * FROM v_gpus_complete').all() as GPUView[];
-    db.close();
-    
-    const gpu = gpus.find(g => createSlug(g.model) === slug);
-    return gpu || null;
-  } catch (error) {
-    console.error('Error al obtener GPU por slug:', error);
-    return null;
-  }
+function toGpu(row: GpuRow): GPU {
+  return {
+    type: 'GPU', id: row.id, externalId: row.external_id, slug: createSlug(row.model), model: row.model,
+    manufacturer: row.manufacturer, cudaCores: row.cuda_cores, streamProcessors: row.stream_processors,
+    baseClockGhz: parseClockGhz(row.base_clock), boostClockGhz: parseClockGhz(row.boost_clock),
+    memoryGb: parseMemoryGb(row.memory), memoryType: row.memory_type, tdpW: parseWatts(row.tdp),
+    specsUrl: row.specs_url, priceUrl: row.price_url, latestPriceEur: row.latest_price, priceDate: row.price_date,
+  };
+}
+
+export function getAllCPUs(): CPU[] {
+  return (database().prepare('SELECT * FROM v_cpus_complete ORDER BY manufacturer, model').all() as CpuRow[]).map(toCpu);
+}
+
+export function getAllGPUs(): GPU[] {
+  return (database().prepare('SELECT * FROM v_gpus_complete ORDER BY manufacturer, model').all() as GpuRow[]).map(toGpu);
+}
+
+export function getCPUBySlug(slug: string): CPU | null {
+  return getAllCPUs().find(cpu => cpu.slug === slug) ?? null;
+}
+
+export function getGPUBySlug(slug: string): GPU | null {
+  return getAllGPUs().find(gpu => gpu.slug === slug) ?? null;
+}
+
+export function getSockets(): string[] {
+  return [...new Set(getAllCPUs().map(cpu => cpu.socket).filter((socket): socket is string => Boolean(socket)))].sort();
+}
+
+export function getCPUsBySocket(socket: string): CPU[] {
+  return getAllCPUs().filter(cpu => cpu.socket?.toLowerCase() === socket.toLowerCase());
+}
+
+export function getVramSizes(): number[] {
+  return [...new Set(getAllGPUs().map(gpu => gpu.memoryGb).filter((gb): gb is number => gb !== null))].sort((a, b) => a - b);
+}
+
+export function getGPUsByVram(gb: number): GPU[] {
+  return getAllGPUs().filter(gpu => gpu.memoryGb === gb);
 }

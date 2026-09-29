@@ -1,77 +1,40 @@
-/**
- * Tipos TypeScript para las vistas de base de datos SQLite
- * Alineados con v_cpus_complete y v_gpus_complete del schema.sql
- */
+/** Rows exposed by the read-only data layer, derived from the v_cpus_complete / v_gpus_complete views. */
 
-// Vista completa de CPU con todas las relaciones
-export interface CPUView {
-  // Datos del componente
+export type Manufacturer = 'Intel' | 'AMD' | 'NVIDIA';
+
+interface ComponentBase {
   id: number;
-  external_id: string;
+  externalId: string;
+  slug: string;
   model: string;
-  manufacturer_id: number;
-  manufacturer_name: string;
-  manufacturer_website: string;
-  
-  // Especificaciones CPU
-  cores: number;
-  threads: number;
-  base_clock_ghz: number;
-  boost_clock_ghz: number;
-  tdp_watts: number;
-  socket: string;
-  
-  // Precio actual
-  current_price_eur: number | null;
-  price_recorded_at: string | null;
-  
-  // Fuente de especificaciones
-  spec_source_url: string | null;
-  spec_source_domain: string | null;
-  
-  // Fuente de precio
-  price_source_url: string | null;
-  price_source_domain: string | null;
-  
-  // Metadatos
-  created_at: string;
-  updated_at: string;
+  manufacturer: Manufacturer;
+  /** Official specification page (validated against the allowlist). */
+  specsUrl: string | null;
+  /** Retailer page for prices; prices themselves are only shown when recorded. */
+  priceUrl: string | null;
+  latestPriceEur: number | null;
+  priceDate: string | null;
 }
 
-// Vista completa de GPU con todas las relaciones
-export interface GPUView {
-  // Datos del componente
-  id: number;
-  external_id: string;
-  model: string;
-  manufacturer_id: number;
-  manufacturer_name: string;
-  manufacturer_website: string;
-  
-  // Especificaciones GPU
-  memory_gb: number;
-  memory_type: string;
-  core_clock_mhz: number;
-  boost_clock_mhz: number;
-  tdp_watts: number;
-  interface: string;
-  
-  // Precio actual
-  current_price_eur: number | null;
-  price_recorded_at: string | null;
-  
-  // Fuente de especificaciones
-  spec_source_url: string | null;
-  spec_source_domain: string | null;
-  
-  // Fuente de precio
-  price_source_url: string | null;
-  price_source_domain: string | null;
-  
-  // Metadatos
-  created_at: string;
-  updated_at: string;
+export interface CPU extends ComponentBase {
+  type: 'CPU';
+  cores: number | null;
+  threads: number | null;
+  baseClockGhz: number | null;
+  boostClockGhz: number | null;
+  tdpW: number | null;
+  socket: string | null;
 }
 
-// Tipo para crear slugs a partir de modelos
-export type ComponentSlug = string;
+export interface GPU extends ComponentBase {
+  type: 'GPU';
+  cudaCores: number | null;
+  streamProcessors: number | null;
+  baseClockGhz: number | null;
+  boostClockGhz: number | null;
+  memoryGb: number | null;
+  memoryType: string | null;
+  tdpW: number | null;
+}
+
+export type Component = CPU | GPU;

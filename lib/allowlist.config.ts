@@ -75,7 +75,10 @@ export const ALLOWED_SOURCES: AllowedDomain[] = [
 export function extractDomain(url: string): string {
   try {
     const urlObj = new URL(url);
-    const hostname = urlObj.hostname;
+    if (urlObj.protocol !== "https:" && urlObj.protocol !== "http:") {
+      throw new Error("unsupported protocol");
+    }
+    const hostname = urlObj.hostname.toLowerCase().replace(/\.$/, "");
     
     // Extract root domain (handle subdomains)
     // e.g., "ark.intel.com" → "intel.com"

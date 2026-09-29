@@ -7,11 +7,10 @@
  * - 3 GPUs NVIDIA
  * - 3 GPUs AMD
  * 
- * Todas las URLs validadas con validateSourceStrict()
+ * Todas las URLs se validan con validateSourceStrict() al construir la base de datos (lib/db/populate.ts)
  * Ningún dato inventado. Si no aparece oficialmente → null
  */
 
-import { validateSourceStrict } from "../lib/validateSource";
 
 export interface ComponentSpec {
   id: string;

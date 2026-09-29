@@ -1,19 +1,94 @@
 {
-  "home": {
+  "meta": {
     "title": "PC Builder Hub",
-    "subtitle": "Plataforma multi-idioma para comparar componentes de PC e construir seu equipamento",
-    "description": "Compare componentes de PC com especificações oficiais de fontes confiáveis. Construa seu PC perfeito com confiança."
+    "description": "Compare CPUs e GPUs com especificações oficiais dos fabricantes e planeje o seu PC."
   },
   "nav": {
     "home": "Início",
+    "cpus": "CPUs",
+    "gpus": "GPUs",
     "compare": "Comparar",
-    "builder": "Construtor de PC",
-    "about": "Sobre"
+    "builder": "Montador",
+    "language": "Idioma"
+  },
+  "home": {
+    "title": "PC Builder Hub",
+    "subtitle": "Compare componentes de PC com especificações oficiais",
+    "description": "Cada especificação vem da página do próprio fabricante e cada fonte é verificada numa lista de permissões. Se um dado não for publicado oficialmente, aparece como indisponível em vez de ser inventado.",
+    "browseCpus": "Ver CPUs",
+    "browseGpus": "Ver GPUs",
+    "openBuilder": "Montar um PC",
+    "components": "componentes",
+    "sources": "fontes validadas",
+    "principlesTitle": "Como funcionam os dados",
+    "principle1": "Apenas fontes oficiais: páginas de produto da Intel, AMD e NVIDIA.",
+    "principle2": "Nenhum dado inventado: o que falta fica vazio.",
+    "principle3": "Os links de loja apontam para a PcComponentes; os preços só aparecem se houver um registado."
   },
   "common": {
-    "language": "Idioma",
-    "loading": "Carregando...",
-    "error": "Ocorreu um erro",
-    "readMore": "Leia mais"
+    "notAvailable": "Não publicado",
+    "officialSpecs": "Especificações oficiais",
+    "retailer": "Página da loja",
+    "viewDetails": "Ver detalhes",
+    "back": "Voltar",
+    "manufacturer": "Fabricante",
+    "noPrice": "Sem preço registado",
+    "price": "Preço",
+    "priceDate": "Preço registado em {date}",
+    "notFound": "Componente não encontrado",
+    "footer": "Especificações de fontes oficiais dos fabricantes. As estimativas são indicativas."
+  },
+  "cpu": {
+    "title": "Processadores (CPUs)",
+    "cores": "Núcleos",
+    "threads": "Threads",
+    "baseClock": "Frequência base",
+    "boostClock": "Frequência turbo",
+    "tdp": "TDP",
+    "socket": "Socket",
+    "bySocket": "Por socket",
+    "socketTitle": "CPUs para socket {socket}"
+  },
+  "gpu": {
+    "title": "Placas gráficas (GPUs)",
+    "memory": "Memória",
+    "memoryType": "Tipo de memória",
+    "baseClock": "Frequência base",
+    "boostClock": "Frequência turbo",
+    "tdp": "Consumo da placa",
+    "cudaCores": "Núcleos CUDA",
+    "streamProcessors": "Processadores stream",
+    "byVram": "Por memória",
+    "vramTitle": "GPUs com {gb} GB de memória"
+  },
+  "compare": {
+    "title": "Comparar",
+    "cpuTitle": "Comparar CPUs",
+    "gpuTitle": "Comparar GPUs",
+    "first": "Primeiro componente",
+    "second": "Segundo componente",
+    "submit": "Comparar",
+    "choose": "Escolha dois componentes para comparar.",
+    "same": "Escolha dois componentes diferentes.",
+    "better": "melhor",
+    "tie": "empate",
+    "spec": "Especificação",
+    "lowerIsBetter": "Um consumo menor é marcado como melhor."
+  },
+  "builder": {
+    "title": "Montador",
+    "intro": "Escolha uma CPU e uma GPU para estimar o consumo e a fonte de alimentação necessária.",
+    "cpu": "Processador",
+    "gpu": "Placa gráfica",
+    "none": "— Selecionar —",
+    "submit": "Calcular",
+    "estimatedDraw": "Consumo máximo estimado",
+    "recommendedPsu": "Fonte recomendada",
+    "psuNote": "Estimativa: TDP da CPU + consumo da GPU + {rest} W para o resto do sistema, com margem de {headroom} %, arredondado para 50 W.",
+    "total": "Preço total",
+    "missingCpu": "Selecione um processador.",
+    "missingGpu": "Selecione uma placa gráfica.",
+    "missingTdp": "O fabricante não publica o consumo de algum componente escolhido, por isso não é mostrada estimativa.",
+    "socketNote": "Precisa de uma placa-mãe com socket {socket}."
   }
 }

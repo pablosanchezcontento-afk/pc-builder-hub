@@ -1,19 +1,94 @@
 {
-  "home": {
+  "meta": {
     "title": "PC Builder Hub",
-    "subtitle": "Plataforma multiidioma para comparar componentes de PC y construir tu equipo",
-    "description": "Compara componentes de PC con especificaciones oficiales de fuentes confiables. Construye tu PC perfecto con confianza."
+    "description": "Compara CPUs y GPUs con especificaciones oficiales de los fabricantes y planifica tu equipo."
   },
   "nav": {
     "home": "Inicio",
+    "cpus": "CPUs",
+    "gpus": "GPUs",
     "compare": "Comparar",
-    "builder": "Constructor de PC",
-    "about": "Acerca de"
+    "builder": "Configurador",
+    "language": "Idioma"
+  },
+  "home": {
+    "title": "PC Builder Hub",
+    "subtitle": "Compara componentes de PC con especificaciones oficiales",
+    "description": "Cada especificación procede de la página del propio fabricante y cada fuente se comprueba contra una lista permitida. Si un dato no está publicado oficialmente, se muestra como no disponible en lugar de inventarlo.",
+    "browseCpus": "Ver CPUs",
+    "browseGpus": "Ver GPUs",
+    "openBuilder": "Configurar un equipo",
+    "components": "componentes",
+    "sources": "fuentes validadas",
+    "principlesTitle": "Cómo funcionan los datos",
+    "principle1": "Solo fuentes oficiales: páginas de producto de Intel, AMD y NVIDIA.",
+    "principle2": "Ningún dato inventado: lo que falta queda vacío.",
+    "principle3": "Los enlaces de tienda apuntan a PcComponentes; los precios solo aparecen si hay uno registrado."
   },
   "common": {
-    "language": "Idioma",
-    "loading": "Cargando...",
-    "error": "Ocurrió un error",
-    "readMore": "Leer más"
+    "notAvailable": "No publicado",
+    "officialSpecs": "Especificaciones oficiales",
+    "retailer": "Página de la tienda",
+    "viewDetails": "Ver detalles",
+    "back": "Volver",
+    "manufacturer": "Fabricante",
+    "noPrice": "Sin precio registrado",
+    "price": "Precio",
+    "priceDate": "Precio registrado el {date}",
+    "notFound": "Componente no encontrado",
+    "footer": "Especificaciones de fuentes oficiales de los fabricantes. Las estimaciones son orientativas."
+  },
+  "cpu": {
+    "title": "Procesadores (CPUs)",
+    "cores": "Núcleos",
+    "threads": "Hilos",
+    "baseClock": "Frecuencia base",
+    "boostClock": "Frecuencia turbo",
+    "tdp": "TDP",
+    "socket": "Socket",
+    "bySocket": "Por socket",
+    "socketTitle": "CPUs para socket {socket}"
+  },
+  "gpu": {
+    "title": "Tarjetas gráficas (GPUs)",
+    "memory": "Memoria",
+    "memoryType": "Tipo de memoria",
+    "baseClock": "Frecuencia base",
+    "boostClock": "Frecuencia turbo",
+    "tdp": "Consumo de la tarjeta",
+    "cudaCores": "Núcleos CUDA",
+    "streamProcessors": "Procesadores stream",
+    "byVram": "Por memoria",
+    "vramTitle": "GPUs con {gb} GB de memoria"
+  },
+  "compare": {
+    "title": "Comparar",
+    "cpuTitle": "Comparar CPUs",
+    "gpuTitle": "Comparar GPUs",
+    "first": "Primer componente",
+    "second": "Segundo componente",
+    "submit": "Comparar",
+    "choose": "Elige dos componentes para compararlos.",
+    "same": "Elige dos componentes distintos.",
+    "better": "mejor",
+    "tie": "empate",
+    "spec": "Especificación",
+    "lowerIsBetter": "Un consumo menor se marca como mejor."
+  },
+  "builder": {
+    "title": "Configurador",
+    "intro": "Elige una CPU y una GPU para estimar el consumo y la fuente de alimentación que necesitas.",
+    "cpu": "Procesador",
+    "gpu": "Tarjeta gráfica",
+    "none": "— Seleccionar —",
+    "submit": "Calcular",
+    "estimatedDraw": "Consumo máximo estimado",
+    "recommendedPsu": "Fuente recomendada",
+    "psuNote": "Estimación: TDP de la CPU + consumo de la GPU + {rest} W para el resto del equipo, con un margen del {headroom} %, redondeado a 50 W.",
+    "total": "Precio total",
+    "missingCpu": "Selecciona un procesador.",
+    "missingGpu": "Selecciona una tarjeta gráfica.",
+    "missingTdp": "El fabricante no publica el consumo de algún componente elegido, así que no se muestra estimación.",
+    "socketNote": "Necesitas una placa base con socket {socket}."
   }
 }

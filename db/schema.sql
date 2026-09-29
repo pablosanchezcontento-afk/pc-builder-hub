@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS components (
   FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(id)
 );
 
-CREATE INDEX idx_components_type ON components(type);
-CREATE INDEX idx_components_external_id ON components(external_id);
+CREATE INDEX IF NOT EXISTS idx_components_type ON components(type);
+CREATE INDEX IF NOT EXISTS idx_components_external_id ON components(external_id);
 
 -- ============================================================
 -- 3. CPU_SPECS (especificaciones de CPUs)
@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS sources (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_sources_domain ON sources(domain);
-CREATE INDEX idx_sources_data_type ON sources(data_type);
+CREATE INDEX IF NOT EXISTS idx_sources_domain ON sources(domain);
+CREATE INDEX IF NOT EXISTS idx_sources_data_type ON sources(data_type);
 
 -- ============================================================
 -- 6. COMPONENT_SOURCES (relación componente-fuente)
@@ -99,8 +99,8 @@ CREATE TABLE IF NOT EXISTS component_sources (
   UNIQUE(component_id, source_id, source_type)
 );
 
-CREATE INDEX idx_component_sources_component ON component_sources(component_id);
-CREATE INDEX idx_component_sources_source ON component_sources(source_id);
+CREATE INDEX IF NOT EXISTS idx_component_sources_component ON component_sources(component_id);
+CREATE INDEX IF NOT EXISTS idx_component_sources_source ON component_sources(source_id);
 
 -- ============================================================
 -- 7. PRICES (histórico de precios)
@@ -118,8 +118,8 @@ CREATE TABLE IF NOT EXISTS prices (
   FOREIGN KEY (source_id) REFERENCES sources(id)
 );
 
-CREATE INDEX idx_prices_component ON prices(component_id);
-CREATE INDEX idx_prices_recorded_at ON prices(recorded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_prices_component ON prices(component_id);
+CREATE INDEX IF NOT EXISTS idx_prices_recorded_at ON prices(recorded_at DESC);
 
 -- ============================================================
 -- VISTAS ÚTILES

@@ -1,126 +1,62 @@
-import { getCPUBySlug, getGPUBySlug } from '@/lib/db';
-import Link from 'next/link';
+import type { Metadata } from 'next';
+import { PSU_HEADROOM, REST_OF_SYSTEM_W, summarizeBuild } from '@/lib/catalog';
+import { getAllCPUs, getAllGPUs, getCPUBySlug, getGPUBySlug } from '@/lib/db';
+import { format, getDictionary } from '@/lib/dictionaries';
+import { isLocale } from '@/lib/i18n';
+import { resolveLang, single } from '@/lib/params';
 
-interface PageProps {
-  params: Promise<{ lang: string }>;
-  searchParams: Promise<{ cpu?: string; gpu?: string }>;
+type Search = Promise<Record<string, string | string[] | undefined>>;
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  return { title: getDictionary(isLocale(lang) ? lang : 'en').builder.title };
 }
 
-export default async function BuilderPage({ params, searchParams }: PageProps) {
-  const { cpu: cpuSlug, gpu: gpuSlug } = await searchParams;
-
-  const cpu = cpuSlug ? await getCPUBySlug(cpuSlug) : null;
-  const gpu = gpuSlug ? await getGPUBySlug(gpuSlug) : null;
-
-  const totalPrice = (
-    (cpu?.price_usd || 0) + 
-    (gpu?.price_usd || 0)
+export default async function BuilderPage({ params, searchParams }: { params: Promise<{ lang: string }>; searchParams: Search }) {
+  const { lang, t } = await resolveLang(params);
+  const query = await searchParams;
+  const cpuSlug = single(query.cpu);
+  const gpuSlug = single(query.gpu);
+  const summary = summarizeBuild(cpuSlug ? getCPUBySlug(cpuSlug) : null, gpuSlug ? getGPUBySlug(gpuSlug) : null);
+  const submitted = Boolean(cpuSlug || gpuSlug);
+  const select = (name: 'cpu' | 'gpu', label: string, value: string | undefined, options: { slug: string; label: string }[]) => (
+    <label className="flex flex-col gap-1 text-sm">
+      <span className="text-slate-500">{label}</span>
+      <select name={name} defaultValue={value ?? ''} className="rounded-lg border border-slate-300 bg-transparent px-3 py-2 dark:border-slate-700">
+        <option value="">{t.builder.none}</option>
+        {options.map(option => <option key={option.slug} value={option.slug}>{option.label}</option>)}
+      </select>
+    </label>
   );
-
+  const messages = summary.missing.map(item => (
+    item === 'cpu' ? t.builder.missingCpu : item === 'gpu' ? t.builder.missingGpu : t.builder.missingTdp
+  ));
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Construye tu PC</h1>
-
-      <div className="space-y-6">
-        {/* CPU Selection */}
-        <div className="border rounded-lg p-6">
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold mb-2">Procesador (CPU)</h2>
-              {cpu ? (
-                <div className="space-y-2">
-                  <p className="text-lg">
-                    <span className="font-medium">{cpu.manufacturer_name}</span> {cpu.model}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Socket: {cpu.socket || 'No especificado oficialmente'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Precio: {cpu.price_usd ? `$${cpu.price_usd}` : 'No especificado oficialmente'}
-                  </p>
-                </div>
-              ) : (
-                <p className="text-gray-500">No seleccionado</p>
-              )}
-            </div>
-            <Link
-              href={`/${params.lang}/builder/cpu${gpuSlug ? `?gpu=${gpuSlug}` : ''}`}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              {cpu ? 'Cambiar' : 'Seleccionar'}
-            </Link>
-          </div>
-        </div>
-
-        {/* GPU Selection */}
-        <div className="border rounded-lg p-6">
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold mb-2">Tarjeta Gráfica (GPU)</h2>
-              {gpu ? (
-                <div className="space-y-2">
-                  <p className="text-lg">
-                    <span className="font-medium">{gpu.manufacturer_name}</span> {gpu.model}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    VRAM: {gpu.vram_gb ? `${gpu.vram_gb} GB` : 'No especificado oficialmente'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Precio: {gpu.price_usd ? `$${gpu.price_usd}` : 'No especificado oficialmente'}
-                  </p>
-                </div>
-              ) : (
-                <p className="text-gray-500">No seleccionado</p>
-              )}
-            </div>
-            <Link
-              href={`/${params.lang}/builder/gpu${cpuSlug ? `?cpu=${cpuSlug}` : ''}`}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              {gpu ? 'Cambiar' : 'Seleccionar'}
-            </Link>
-          </div>
-        </div>
-
-        {/* Summary */}
-        {(cpu || gpu) && (
-          <div className="border-t-4 border-blue-600 bg-blue-50 rounded-lg p-6 mt-8">
-            <h3 className="text-xl font-semibold mb-4">Resumen del PC</h3>
-            
-            <div className="space-y-3">
-              {totalPrice > 0 && (
-                <div className="flex justify-between text-lg font-semibold">
-                  <span>Precio Total:</span>
-                  <span className="text-blue-600">${totalPrice.toFixed(2)} USD</span>
-                </div>
-              )}
-
-              <div className="border-t pt-3 mt-3">
-                <div className="bg-blue-100 p-4 rounded">
-                  <p className="text-sm font-medium text-blue-900 mb-2">
-                    ✓ Compatibilidad básica verificada
-                  </p>
-                  <p className="text-xs text-blue-700">
-                    Este builder no evalúa rendimiento ni consumo. Los datos mostrados provienen de especificaciones oficiales de fabricantes.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {!cpu && !gpu && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">Comienza seleccionando un procesador para tu PC</p>
-            <Link
-              href={`/${params.lang}/builder/cpu`}
-              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Seleccionar CPU
-            </Link>
-          </div>
-        )}
-      </div>
+    <div className="max-w-3xl space-y-6">
+      <h1 className="text-3xl font-bold">{t.builder.title}</h1>
+      <p className="text-slate-600 dark:text-slate-400">{t.builder.intro}</p>
+      <form action={`/${lang}/builder`} method="get" className="flex flex-wrap items-end gap-4">
+        {select('cpu', t.builder.cpu, summary.cpu?.slug, getAllCPUs().map(cpu => ({ slug: cpu.slug, label: `${cpu.manufacturer} ${cpu.model}` })))}
+        {select('gpu', t.builder.gpu, summary.gpu?.slug, getAllGPUs().map(gpu => ({ slug: gpu.slug, label: `${gpu.manufacturer} ${gpu.model}` })))}
+        <button type="submit" className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">{t.builder.submit}</button>
+      </form>
+      {submitted && (
+        <section aria-live="polite" className="space-y-3 rounded-xl border border-slate-200 p-5 dark:border-slate-800">
+          {[...new Set(messages)].map(message => <p key={message} className="text-amber-700 dark:text-amber-400">{message}</p>)}
+          {summary.recommendedPsuW !== null && (
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <div><dt className="text-sm text-slate-500">{t.builder.estimatedDraw}</dt><dd className="text-2xl font-bold">{summary.estimatedDrawW} W</dd></div>
+              <div><dt className="text-sm text-slate-500">{t.builder.recommendedPsu}</dt><dd className="text-2xl font-bold">{summary.recommendedPsuW} W</dd></div>
+            </dl>
+          )}
+          {summary.totalPriceEur !== null && (
+            <p><span className="text-sm text-slate-500">{t.builder.total}: </span>
+              <strong>{new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' }).format(summary.totalPriceEur)}</strong></p>
+          )}
+          {summary.cpu?.socket && <p className="text-sm">{format(t.builder.socketNote, { socket: summary.cpu.socket })}</p>}
+          <p className="text-xs text-slate-500">{format(t.builder.psuNote, { rest: REST_OF_SYSTEM_W, headroom: Math.round((PSU_HEADROOM - 1) * 100) })}</p>
+        </section>
+      )}
     </div>
   );
 }
