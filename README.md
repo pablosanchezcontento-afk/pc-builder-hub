@@ -32,7 +32,7 @@ lib/db/index.ts (read-only) ─▶ typed CPU / GPU objects ─▶ pages
 ```
 
 * **Allowlist** (`lib/allowlist.config.ts`): `intel.com` (CPU specs), `amd.com` (CPU + GPU specs),
-  `nvidia.com` (GPU specs), `pccomponentes.com` (prices). Only `http(s)` URLs; look-alike domains are rejected;
+  `nvidia.com` (GPU specs), `pccomponentes.com` (prices). Only `https` URLs (plain HTTP can be altered in transit); look-alike domains are rejected;
   a source is also checked against the data type it provides (Intel cannot be a price source).
 * **Import is transactional**: one unapproved source aborts the whole import.
 * **Prices**: the seed contains retailer links but no prices, because none were recorded from the source.

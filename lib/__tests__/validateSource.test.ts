@@ -93,11 +93,13 @@ describe("validateSource", () => {
     expect(result.domain).toBe("intel.com");
   });
 
-  test("handles HTTP and HTTPS", () => {
+  test("accepts HTTPS and rejects plain HTTP, even for allowed hosts", () => {
+    // Official specs must come over TLS: a plain-HTTP page can be altered in transit.
     const https = validateSource("https://www.amd.com/test");
     const http = validateSource("http://www.amd.com/test");
     expect(https.valid).toBe(true);
-    expect(http.valid).toBe(true);
+    expect(http.valid).toBe(false);
+    expect(http.errorCode).toBe(ValidationErrorCode.INVALID_URL);
   });
 
   test("rejects invalid URL format", () => {

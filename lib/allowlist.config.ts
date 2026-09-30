@@ -75,7 +75,8 @@ export const ALLOWED_SOURCES: AllowedDomain[] = [
 export function extractDomain(url: string): string {
   try {
     const urlObj = new URL(url);
-    if (urlObj.protocol !== "https:" && urlObj.protocol !== "http:") {
+    // HTTPS only: a plain-HTTP spec page can be altered in transit, so it is not an official source.
+    if (urlObj.protocol !== "https:") {
       throw new Error("unsupported protocol");
     }
     const hostname = urlObj.hostname.toLowerCase().replace(/\.$/, "");
